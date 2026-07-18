@@ -631,6 +631,16 @@ const pageDescription = "Halaman hasil cek data bocor. Temukan apakah email, aku
 
         const data = await response.json();
 
+        if (typeof (window as any).gtag === 'function') {
+          (window as any).gtag('event', 'search_email', {
+            'event_category': 'Security Check',
+            'event_label': 'Email Leak Check',
+            'is_breached': data.is_breached ? 'yes' : 'no',
+            'risk_rating': data.risk_assessment?.rating || 'unknown',
+            'breaches_count': data.breaches_count || 0
+          });
+        }
+
         if (data.is_breached) {
           renderBreachedState(data.email, data.risk_assessment.score, data.risk_assessment.rating, data.breaches, data.recommendations);
         } else {
