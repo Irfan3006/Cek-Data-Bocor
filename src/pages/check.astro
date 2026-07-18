@@ -608,7 +608,13 @@ const pageDescription = "Halaman hasil cek data bocor. Temukan apakah email, aku
       }
 
       try {
-        const response = await fetch(`/api/check?email=${encodeURIComponent(email)}`);
+        const response = await fetch(`/api/check`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ email: email })
+        });
 
         if (loadingContainer) loadingContainer.classList.add("hidden");
 

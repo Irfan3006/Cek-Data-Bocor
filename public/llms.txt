@@ -13,7 +13,7 @@
 * **Architecture**: Clean separation of Static Edge UI and Serverless API.
 
 ## Public API Endpoints
-* `GET /api/check?email=<email>`: Evaluates breach status, risk score (0-100), risk rating, and returns mitigation recommendations in Indonesian.
+* `POST /api/check`: Evaluates breach status, risk score (0-100), risk rating, and returns mitigation recommendations in Indonesian. Expects request body: `{"email": "<email>"}`.
   * Rate-limited: max 10 requests/minute per IP.
   * Cache: 10-minute TTL in-memory.
 

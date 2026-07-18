@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, Query, HTTPException, status
 from pydantic import EmailStr
 from typing import Dict, Any
 
-from api.schemas.check import CheckResponse, BreachDetail
+from api.schemas.check import CheckResponse, BreachDetail, EmailCheckRequest
 from api.cache.store import cache_store
 from api.core.limiter import rate_limit_dependency
 from api.services.xposedornot import xon_service
@@ -14,7 +14,7 @@ from api.services.translator import translator_service
 
 router = APIRouter()
 
-@router.get(
+@router.post(
     "/check",
     response_model=CheckResponse,
     summary="Periksa kebocoran email",
@@ -22,9 +22,9 @@ router = APIRouter()
     dependencies=[Depends(rate_limit_dependency)]
 )
 async def check_email(
-    email: EmailStr = Query(..., description="Alamat email yang akan diperiksa")
+    request_data: EmailCheckRequest
 ) -> Any:
-    normalized_email = str(email).strip().lower()
+    normalized_email = str(request_data.email).strip().lower()
     
     cached_result = cache_store.get(normalized_email)
     if cached_result:
