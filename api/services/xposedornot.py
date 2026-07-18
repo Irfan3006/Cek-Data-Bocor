@@ -37,7 +37,7 @@ class XposedOrNotService:
                 
                 if response.status_code == status.HTTP_200_OK:
                     data = response.json()
-                    exposed_breaches = data.get("ExposedBreaches", {})
+                    exposed_breaches = data.get("ExposedBreaches") or {}
                     breaches_details = exposed_breaches.get("breaches_details", [])
                     return breaches_details
                 
@@ -47,7 +47,6 @@ class XposedOrNotService:
                 )
                 
             except httpx.RequestError:
-                # Menutupi stack trace jaringan agar aman
                 raise HTTPException(
                     status_code=status.HTTP_504_GATEWAY_TIMEOUT,
                     detail="Batas waktu koneksi ke database kebocoran habis."
