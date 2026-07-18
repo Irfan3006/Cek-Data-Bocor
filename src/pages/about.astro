@@ -1,0 +1,73 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+
+const pageTitle = "Tentang Kami | Layanan Cek Data Bocor";
+const pageDescription = "Cari tahu tentang platform databocor.web.id, misi peningkatan kesadaran keamanan siber di Indonesia, serta pentingnya melakukan cek email dan cek akun yang terancam hacker.";
+---
+
+<Layout title={pageTitle} description={pageDescription}>
+  <Navbar />
+  
+  <main class="flex-grow py-12 px-4 bg-neutral-bg">
+    <article class="max-w-3xl mx-auto space-y-8">
+      
+      <!-- Judul Halaman -->
+      <header class="space-y-2 border-b border-neutral-border pb-4">
+        <h1 class="text-3xl font-black text-neutral-text tracking-tight">
+          Tentang Layanan Ini
+        </h1>
+        <p class="text-sm text-neutral-textMuted">
+          Misi peningkatan kesadaran siber di Indonesia
+        </p>
+      </header>
+
+      <!-- Isi Artikel -->
+      <section class="space-y-6 text-sm text-neutral-text leading-relaxed">
+        <p>
+          <strong>Cek Data Bocor</strong> adalah inisiatif independen yang dirancang khusus untuk masyarakat Indonesia. Dengan maraknya insiden kebocoran data (data breach) baik skala nasional maupun global, layanan ini hadir untuk mempermudah siapa saja mendeteksi apakah alamat email pribadi mereka pernah terekspos di internet.
+        </p>
+
+        <div class="space-y-3">
+          <h2 class="text-lg font-bold text-neutral-text">Misi Kami</h2>
+          <p>
+            Misi utama kami adalah menyediakan alat pengecekan yang <strong>cepat, aman, tanpa iklan, dan bebas dari pelacakan komersial</strong>. Kami ingin mengedukasi masyarakat awam agar lebih sadar akan pentingnya menjaga keamanan akun digital mereka, seperti dengan mengganti kata sandi secara berkala dan mengaktifkan autentikasi dua faktor (2FA).
+          </p>
+        </div>
+
+        <div class="space-y-3">
+          <h2 class="text-lg font-bold text-neutral-text">Sumber Data Publik</h2>
+          <p>
+            Layanan kami terintegrasi secara asinkron dengan database publik skala besar yang dikumpulkan dan dikelola secara independen oleh komunitas siber global yang berspesialisasi dalam pengumpulan data kredensial terkompromi secara aman.
+          </p>
+          <p>
+            Layanan kami bersifat independen dan menggunakan API publik guna memproses data analisis risiko dan rekomendasi mitigasi dalam Bahasa Indonesia.
+          </p>
+        </div>
+
+        <div class="space-y-3">
+          <h2 class="text-lg font-bold text-neutral-text">Komitmen Keamanan & Kecepatan</h2>
+          <p>
+            Sesuai prinsip rekayasa perangkat lunak modern, aplikasi ini dibangun menggunakan standar keamanan tinggi:
+          </p>
+          <ul class="list-disc pl-5 space-y-1.5">
+            <li><strong>Aman</strong>: Validasi input ketat, header perlindungan keamanan (CSPs, HSTS) aktif, dan stack trace internal tidak diekspos ke publik.</li>
+            <li><strong>Ringan & Cepat</strong>: Menggunakan teknologi static site generator Astro untuk menjamin pergeseran tata letak (CLS) mendekati nol dan waktu muat di bawah 2 detik.</li>
+            <li><strong>Privasi Penuh</strong>: Data pencarian Anda diproses langsung tanpa ada yang disimpan di server lokal kami.</li>
+          </ul>
+        </div>
+
+        <div class="space-y-3">
+          <h2 class="text-lg font-bold text-neutral-text">Kritik & Saran</h2>
+          <p>
+            Kami menyambut baik masukan dari para praktisi keamanan informasi atau pengembang software di Indonesia. Dukungan Anda sangat berarti bagi pengembangan literasi siber tanah air.
+          </p>
+        </div>
+      </section>
+
+    </article>
+  </main>
+
+  <Footer />
+</Layout>

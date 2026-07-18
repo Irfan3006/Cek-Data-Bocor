@@ -1,0 +1,76 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+
+const pageTitle = "Hubungi Kami | Kontak Admin Cek Data Bocor";
+const pageDescription = "Hubungi kontak resmi databocor.web.id jika Anda memiliki pertanyaan, masukan, kerja sama, atau laporan celah keamanan siber cek email dan akun hacker.";
+---
+
+<Layout title={pageTitle} description={pageDescription}>
+  <Navbar />
+  
+  <main class="flex-grow py-12 px-4 bg-neutral-bg">
+    <article class="max-w-xl mx-auto space-y-8">
+      
+      <!-- Judul Halaman -->
+      <header class="space-y-2 border-b border-neutral-border pb-4 text-center sm:text-left">
+        <h1 class="text-3xl font-black text-neutral-text tracking-tight">
+          Hubungi Kami
+        </h1>
+        <p class="text-sm text-neutral-textMuted">
+          Kami sangat terbuka untuk pertanyaan, saran, atau kolaborasi
+        </p>
+      </header>
+
+      <!-- Isi Halaman Kontak -->
+      <section class="space-y-6 text-sm text-neutral-text leading-relaxed">
+        <p class="text-center sm:text-left">
+          Punya pertanyaan seputar kebocoran data, kritik, saran pengembangan website, atau ingin berkolaborasi? Jangan ragu untuk menghubungi kami langsung melalui kontak di bawah ini.
+        </p>
+
+        <!-- Kartu Kontak Premium -->
+        <div class="bg-neutral-bgAlt border border-neutral-border p-6 rounded-lg shadow-sm space-y-6 text-center">
+          <!-- Icon Amplop / Mail -->
+          <div class="inline-flex p-3.5 bg-primary/10 rounded-full text-primary border border-primary/20">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-8 h-8">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
+            </svg>
+          </div>
+
+          <div class="space-y-2">
+            <h3 class="text-base font-bold text-neutral-text">Alamat Email Resmi</h3>
+            <p class="text-xs text-neutral-textMuted max-w-xs mx-auto">
+              Silakan kirimkan pesan Anda secara langsung ke alamat email developer berikut:
+            </p>
+            <div class="bg-neutral-bg px-4 py-2.5 rounded border border-neutral-border inline-block font-mono text-sm text-primary select-all select-none">
+              irfansyarifudin79@gmail.com
+            </div>
+          </div>
+
+          <!-- Tombol Kirim Email -->
+          <div class="pt-2">
+            <a
+              href="mailto:irfansyarifudin79@gmail.com?subject=Tanya%20Cek%20Kebocoran%20Data"
+              class="inline-flex items-center space-x-2 py-3 px-6 bg-primary hover:bg-primary-dark text-white font-semibold rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 w-full sm:w-auto justify-center text-sm"
+              aria-label="Kirim Email ke irfansyarifudin79@gmail.com"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5" />
+              </svg>
+              <span>Kirim Email Sekarang</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Tambahan / Petunjuk FAQ -->
+        <p class="text-xs text-neutral-textMuted text-center leading-relaxed">
+          Sebelum menghubungi kami, Anda juga bisa membaca halaman <a href="/faq" class="text-primary hover:underline font-medium">FAQ (Pertanyaan Umum)</a> kami untuk menemukan jawaban cepat dari pertanyaan-pertanyaan yang sering diajukan.
+        </p>
+
+      </section>
+    </article>
+  </main>
+  
+  <Footer />
+</Layout>

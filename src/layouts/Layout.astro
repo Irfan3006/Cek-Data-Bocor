@@ -1,0 +1,85 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description: string;
+  canonicalPath?: string;
+  schemaJson?: object;
+}
+
+const { 
+  title, 
+  description, 
+  canonicalPath = Astro.url.pathname,
+  schemaJson 
+} = Astro.props;
+
+const siteName = "Cek Data Bocor";
+const baseUrl = "https://databocor.web.id"; // Fallback URL
+const canonicalURL = new URL(canonicalPath, Astro.site ?? baseUrl).toString();
+
+// Default JSON-LD WebSite Schema
+const defaultSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": siteName,
+  "url": baseUrl,
+  "description": "Layanan gratis untuk mendeteksi kebocoran email di Indonesia menggunakan database publik.",
+  "inLanguage": "id-ID"
+};
+
+const finalSchema = schemaJson || defaultSchema;
+---
+
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    
+    <title>{title} | {siteName}</title>
+    <meta name="description" content={description} />
+    <meta name="keywords" content="cek data bocor, data bocor, cek data, cek email bocor, cek email, cek password bocor, cek akun, cek hacker, cybersecurity indonesia, periksa akun retas" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <meta name="author" content="Cek Data Bocor" />
+    <meta name="theme-color" content="#121318" />
+    <link rel="canonical" href={canonicalURL} />
+    
+    <!-- Geo Tags for Indonesian Audience -->
+    <meta name="geo.region" content="ID" />
+    <meta name="geo.position" content="-0.789275;113.921327" />
+    <meta name="ICBM" content="-0.789275, 113.921327" />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:title" content={`${title} | ${siteName}`} />
+    <meta property="og:description" content={description} />
+    <meta property="og:site_name" content={siteName} />
+    <meta property="og:image" content={`${baseUrl}/og-image.png`} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:locale" content="id_ID" />
+    
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content={canonicalURL} />
+    <meta name="twitter:title" content={`${title} | ${siteName}`} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={`${baseUrl}/og-image.png`} />
+
+    <!-- Google Fonts - Inter (Premium typography) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json" set:html={JSON.stringify(finalSchema)} />
+  </head>
+  <body class="flex flex-col min-h-screen">
+    <slot />
+  </body>
+</html>

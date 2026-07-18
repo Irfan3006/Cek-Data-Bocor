@@ -1,0 +1,185 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    color-scheme: dark;
+  }
+
+  body {
+    @apply bg-neutral-bg text-neutral-text antialiased font-sans selection:bg-primary/30 selection:text-neutral-text;
+  }
+
+  /* Focus rings for keyboard navigation accessibility */
+  *:focus-visible {
+    @apply outline-none ring-2 ring-primary ring-offset-2 ring-offset-neutral-bg;
+  }
+
+  /* Scrollbar dark styling */
+  ::-webkit-scrollbar {
+    @apply w-2;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-neutral-bg;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-neutral-border rounded-full;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-neutral-textMuted;
+  }
+}
+
+/* ==========================================
+   MULTI-DEVICE RESPONSIVE OVERRIDES
+   ========================================== */
+
+/* 1. Smartwatches & Cover Screens (very tiny screens: <= 380px, e.g., Samsung Galaxy Watch, Apple Watch, Flip cover screens) */
+@media (max-width: 380px), (max-device-width: 380px) {
+  html {
+    font-size: 11px !important;
+  }
+  body {
+    padding: 0.25rem !important;
+    padding-bottom: 6rem !important; /* Bezel padding / simulator toolbar overscroll space */
+  }
+  header {
+    position: static !important; /* Disable sticky navigation to free up vertical height */
+  }
+  header nav {
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 0.25rem !important;
+    padding: 0.5rem 0.25rem !important;
+  }
+  header nav a span {
+    font-size: 0.85rem !important;
+  }
+  header nav div[role="menubar"] {
+    display: flex !important;
+    flex-direction: row !important; /* Keep links in a single row to save vertical space */
+    flex-wrap: nowrap !important;
+    justify-content: center !important;
+    gap: 0.5rem !important;
+    font-size: 0.8rem !important;
+    margin-top: 0.25rem !important;
+  }
+  header nav div[role="menubar"] > a {
+    margin: 0 0.5rem !important; /* Proper horizontal spacing between nav links */
+  }
+  main {
+    padding: 0.5rem 0.25rem !important;
+  }
+  h1 {
+    font-size: 1.35rem !important;
+  }
+  .p-6, .p-8 {
+    padding: 0.75rem !important;
+  }
+  .grid-cols-2 {
+    grid-template-columns: 1fr !important;
+  }
+  .flex-row {
+    flex-direction: column !important;
+  }
+  
+  /* Force column layout for device-stack elements (e.g. RiskBadge) */
+  .device-stack {
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+    gap: 1rem !important;
+  }
+  .device-stack > * {
+    text-align: center !important;
+  }
+
+  .space-y-8 > :not([hidden]) ~ :not([hidden]) {
+    margin-top: 1rem !important;
+  }
+  .space-x-4 > :not([hidden]) ~ :not([hidden]) {
+    margin-left: 0 !important;
+    margin-top: 0.5rem !important;
+  }
+  img {
+    max-width: 32px !important;
+    max-height: 32px !important;
+  }
+  input {
+    padding: 0.5rem !important;
+    font-size: 0.85rem !important;
+  }
+  button {
+    padding: 0.5rem !important;
+    font-size: 0.85rem !important;
+  }
+  
+  /* Donation Modal Smartwatch Optimizations */
+  #donation-modal .bg-neutral-bgAlt {
+    padding: 0.5rem !important;
+    gap: 0.5rem !important;
+    max-height: 95vh !important;
+  }
+  #donation-modal-title {
+    font-size: 1.15rem !important;
+  }
+  #donation-modal .group {
+    max-width: 120px !important;
+    padding: 0.25rem !important;
+  }
+  #donation-modal p {
+    font-size: 0.8rem !important;
+    line-height: 1.25 !important;
+  }
+  #donation-modal button {
+    padding-top: 0.5rem !important;
+    padding-bottom: 0.5rem !important;
+    font-size: 0.8rem !important;
+  }
+}
+
+/* 2. Ultra-tiny Smartwatches (e.g. <= 240px wide screens) */
+@media (max-width: 240px), (max-device-width: 240px) {
+  html {
+    font-size: 9px !important;
+  }
+  header nav div[role="menubar"] {
+    flex-direction: column !important;
+    gap: 0.25rem !important;
+  }
+}
+
+/* 3. Foldables / Flip Tablets (between portrait and landscape, aspect ratio changes) */
+@media (orientation: portrait) and (max-width: 600px) {
+  .grid-cols-2 {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* 4. Large Monitors, TVs & Smart Fridges (Kulkas) (width >= 1600px) */
+@media (min-width: 1600px) {
+  html {
+    font-size: 17px !important;
+  }
+  .max-w-4xl {
+    max-width: 80rem !important; /* 1280px */
+  }
+  .max-w-3xl {
+    max-width: 64rem !important; /* 1024px */
+  }
+}
+
+/* 5. 4K TVs / Large Displays (width >= 2560px) */
+@media (min-width: 2560px) {
+  html {
+    font-size: 22px !important;
+  }
+  body {
+    max-width: 1920px;
+    margin-left: auto;
+    margin-right: auto;
+    border-left: 1px solid #334155;
+    border-right: 1px solid #334155;
+  }
+}

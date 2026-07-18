@@ -1,0 +1,26 @@
+---
+const currentYear = new Date().getFullYear();
+---
+
+<footer class="border-t border-neutral-border mt-auto" aria-label="Footer Informasi">
+  <div class="max-w-6xl mx-auto px-4 py-6">
+
+    <div class="device-stack flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <p class="text-sm font-semibold text-neutral-text tracking-tight">Cek Data Bocor</p>
+      <nav class="flex items-center gap-5 text-xs" aria-label="Menu Tautan Footer">
+        <a href="/about" class="text-neutral-textMuted hover:text-primary transition-colors">Tentang</a>
+        <a href="/faq" class="text-neutral-textMuted hover:text-primary transition-colors">FAQ</a>
+        <a href="/privacy" class="text-neutral-textMuted hover:text-primary transition-colors">Privasi</a>
+        <a href="/contact" class="text-neutral-textMuted hover:text-primary transition-colors">Kontak</a>
+      </nav>
+    </div>
+
+    <div class="border-t border-neutral-border my-4"></div>
+
+    <div class="space-y-2 text-[11px] text-neutral-textMuted leading-relaxed">
+      <p>&copy; {currentYear} Cek Data Bocor &middot; Data Publik, Privasi Aman</p>
+      <p class="max-w-2xl">Kami tidak menyimpan email atau kata sandi Anda. Seluruh pemeriksaan diproses langsung melalui API database publik secara real-time.</p>
+    </div>
+
+  </div>
+</footer>

@@ -1,0 +1,76 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+import SearchCard from '../components/SearchCard.astro';
+
+const pageTitle = "Cek Data Bocor | Cek Akun Bocor";
+const pageDescription = "Cek data bocor secara gratis. Cari tahu apakah email, akun, atau password Anda pernah bocor dan diretas hacker menggunakan database publik secara aman.";
+
+const schemaJson = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": "https://databocor.web.id/#website",
+      "url": "https://databocor.web.id/",
+      "name": "Data Bocor",
+      "description": "Layanan gratis untuk cek data bocor, cek email, cek akun, dan cek password bocor di Indonesia.",
+      "inLanguage": "id-ID",
+      "potentialAction": [{
+        "@type": "SearchAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://databocor.web.id/check?email={search_term_string}"
+        },
+        "query-input": "required name=search_term_string"
+      }]
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://databocor.web.id/#webpage",
+      "url": "https://databocor.web.id/",
+      "name": "Cek Data Bocor - Cek Akun Hacker",
+      "isPartOf": { "@id": "https://databocor.web.id/#website" },
+      "description": pageDescription,
+      "inLanguage": "id-ID"
+    }
+  ]
+};
+---
+
+<Layout title={pageTitle} description={pageDescription} schemaJson={schemaJson}>
+  <Navbar />
+  
+  <main class="flex-grow flex items-center justify-center py-12 sm:py-20 px-4 bg-neutral-bg">
+    <div class="max-w-4xl w-full text-center space-y-8">
+      
+      <section class="space-y-4">
+        <h1 class="text-3xl sm:text-5xl font-black text-neutral-text tracking-tight leading-tight max-w-2xl mx-auto">
+          Cek Data Bocor
+        </h1>
+        <p class="text-base sm:text-lg text-neutral-textMuted max-w-xl mx-auto leading-relaxed">
+          Gunakan layanan gratis ini untuk cek email, cek akun, dan cek password bocor di database internet secara aman.
+        </p>
+      </section>
+
+      <section aria-label="Pencarian Email">
+        <SearchCard />
+      </section>
+
+      <section class="max-w-md mx-auto grid grid-cols-2 gap-4 pt-6 border-t border-neutral-border text-center text-xs text-neutral-textMuted select-none">
+        <div class="space-y-1">
+          <span class="block font-bold text-neutral-text">100% Gratis</span>
+          <span>Tanpa dipungut biaya apapun</span>
+        </div>
+        <div class="space-y-1">
+          <span class="block font-bold text-neutral-text">Aman & Privasi</span>
+          <span>Kami tidak menyimpan email Anda</span>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <Footer />
+</Layout>

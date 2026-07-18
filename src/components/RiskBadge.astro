@@ -1,0 +1,85 @@
+---
+interface Props {
+  score: number;
+  rating: string;
+}
+
+const { score, rating } = Astro.props;
+
+// Tentukan warna berdasarkan tingkat keparahan risiko (hanya menggunakan warna yang diperbolehkan)
+let colorClass = "";
+let borderClass = "";
+let bgClass = "";
+
+switch (rating) {
+  case "Aman":
+    colorClass = "text-accent"; // Hijau
+    borderClass = "border-accent";
+    bgClass = "bg-accent-light";
+    break;
+  case "Rendah":
+    colorClass = "text-primary"; // Biru
+    borderClass = "border-primary";
+    bgClass = "bg-primary-light";
+    break;
+  case "Sedang":
+    colorClass = "text-neutral-text"; // Abu-abu gelap / netral
+    borderClass = "border-neutral-border";
+    bgClass = "bg-neutral-bgAlt";
+    break;
+  case "Tinggi":
+  case "Kritis":
+  default:
+    colorClass = "text-danger"; // Merah
+    borderClass = "border-danger";
+    bgClass = "bg-danger-light";
+    break;
+}
+---
+
+<div class={`border p-6 rounded-lg flex flex-col sm:flex-row items-center justify-between gap-6 bg-neutral-bg ${borderClass}`} aria-label={`Tingkat Risiko Keamanan: ${rating}`}>
+  <div class="space-y-2 text-center sm:text-left">
+    <span class="text-xs font-bold uppercase tracking-wider text-neutral-textMuted">Tingkat Risiko</span>
+    <h2 class={`text-3xl font-extrabold tracking-tight ${colorClass}`}>
+      {rating}
+    </h2>
+    <p class="text-sm text-neutral-textMuted max-w-md">
+      {rating === "Aman" && "Email Anda aman. Tidak terdeteksi kebocoran data pada database yang kami pantau."}
+      {rating === "Rendah" && "Ditemukan kebocoran minimal. Tindakan pengamanan dasar sudah cukup."}
+      {rating === "Sedang" && "Email Anda bocor di beberapa platform. Perlu waspada dan lakukan pengecekan mandiri."}
+      {rating === "Tinggi" && "Email Anda terdeteksi dalam banyak kebocoran data. Segera lakukan tindakan pengamanan."}
+      {rating === "Kritis" && "Sangat berbahaya! Kredensial sensitif Anda bocor secara signifikan. Amankan akun Anda sekarang juga."}
+    </p>
+  </div>
+
+  <!-- Indikator Skor Lingkaran Minimalis -->
+  <div class="relative flex items-center justify-center flex-shrink-0" aria-label={`Skor Risiko: ${score} dari 100`}>
+    <svg class="w-24 h-24 transform -rotate-90">
+      <!-- Lingkaran Background -->
+      <circle
+        cx="48"
+        cy="48"
+        r="40"
+        stroke="#e5e7eb"
+        stroke-width="8"
+        fill="transparent"
+      />
+      <!-- Lingkaran Progress -->
+      <circle
+        cx="48"
+        cy="48"
+        r="40"
+        stroke="currentColor"
+        stroke-width="8"
+        fill="transparent"
+        stroke-dasharray={2 * Math.PI * 40}
+        stroke-dashoffset={2 * Math.PI * 40 * (1 - score / 100)}
+        class={colorClass}
+      />
+    </svg>
+    <div class="absolute flex flex-col items-center justify-center">
+      <span class="text-2xl font-black text-neutral-text">{score}</span>
+      <span class="text-[10px] font-bold uppercase text-neutral-textMuted tracking-tight">Skor</span>
+    </div>
+  </div>
+</div>

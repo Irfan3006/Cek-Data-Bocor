@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://databocor.web.id/sitemap.xml

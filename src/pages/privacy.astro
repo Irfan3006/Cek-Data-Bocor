@@ -1,0 +1,88 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+
+const pageTitle = "Kebijakan Privasi | Proteksi Cek Data Bocor";
+const pageDescription = "Kebijakan privasi platform databocor.web.id. Komitmen penuh kami untuk menjamin keamanan pencarian cek email bocor, cek akun, dan proteksi privasi Anda.";
+---
+
+<Layout title={pageTitle} description={pageDescription}>
+  <Navbar />
+  
+  <main class="flex-grow py-12 px-4 bg-neutral-bg">
+    <article class="max-w-3xl mx-auto space-y-8">
+      
+      <!-- Judul Halaman -->
+      <header class="space-y-2 border-b border-neutral-border pb-4">
+        <h1 class="text-3xl font-black text-neutral-text tracking-tight">
+          Kebijakan Privasi
+        </h1>
+        <p class="text-sm text-neutral-textMuted">
+          Terakhir Diperbarui: 18 Juli 2026
+        </p>
+      </header>
+
+      <!-- Isi Artikel -->
+      <section class="space-y-6 text-sm text-neutral-text leading-relaxed">
+        <p>
+          Selamat datang di <strong>Cek Data Bocor</strong>. Kami sangat menghargai kepercayaan Anda dan berkomitmen penuh untuk melindungi privasi serta keamanan data pribadi Anda selama menggunakan layanan kami.
+        </p>
+
+        <div class="space-y-3">
+          <h2 class="text-lg font-bold text-neutral-text">1. Tidak Ada Penyimpanan Data</h2>
+          <p>
+            Prinsip utama kami adalah <strong>kedaulatan data pengguna</strong>. Kami berkomitmen:
+          </p>
+          <ul class="list-disc pl-5 space-y-1.5">
+            <li><strong>Tidak menyimpan</strong> alamat email yang Anda masukkan ke dalam database atau media penyimpanan permanen apa pun.</li>
+            <li><strong>Tidak mencatat</strong> hasil pemeriksaan kebocoran data Anda.</li>
+            <li>Proses pencarian dikirimkan langsung secara real-time ke API database publik dan dikembalikan langsung kepada Anda.</li>
+          </ul>
+        </div>
+
+        <div class="space-y-3">
+          <h2 class="text-lg font-bold text-neutral-text">2. Penggunaan API Pihak Ketiga</h2>
+          <p>
+            Pemeriksaan kebocoran data email dilakukan dengan memanggil API dari database publik secara aman untuk dicocokkan dengan database kebocoran global.
+          </p>
+        </div>
+
+        <div class="space-y-3">
+          <h2 class="text-lg font-bold text-neutral-text">3. Penggunaan Cache & Rate Limiting</h2>
+          <p>
+            Untuk menjaga stabilitas sistem dan melindungi server kami dari penyalahgunaan (seperti serangan DoS/DDoS), kami menerapkan sistem keamanan berikut:
+          </p>
+          <ul class="list-disc pl-5 space-y-1.5">
+            <li><strong>Memory Cache</strong>: Hasil pengecekan email disimpan sementara di dalam memori server (RAM) selama maksimal 10 menit. Ini bertujuan agar jika Anda melakukan pengecekan ulang dalam waktu singkat, sistem tidak perlu memanggil kembali API database publik. Data cache ini akan terhapus otomatis setelah batas waktu habis.</li>
+            <li><strong>IP Rate Limiting</strong>: Kami melacak alamat IP pengakses secara terenkripsi di memori untuk membatasi akses maksimal 10 request per menit demi mencegah kelebihan beban server.</li>
+          </ul>
+        </div>
+
+        <div class="space-y-3">
+          <h2 class="text-lg font-bold text-neutral-text">4. Cookies & Pelacakan</h2>
+          <p>
+            Website kami dibuat se-minimalis mungkin. Kami <strong>tidak menggunakan cookies pelacak iklan</strong>, analitik pihak ketiga yang invasif, atau skrip eksternal yang dapat melacak perilaku berselancar Anda di luar situs ini.
+          </p>
+        </div>
+
+        <div class="space-y-3">
+          <h2 class="text-lg font-bold text-neutral-text">5. Perubahan Kebijakan</h2>
+          <p>
+            Kami berhak untuk mengubah Kebijakan Privasi ini kapan saja seiring dengan pembaruan fitur keamanan. Setiap perubahan akan langsung dipublikasikan di halaman ini dengan tanggal pembaruan terbaru.
+          </p>
+        </div>
+
+        <div class="space-y-3">
+          <h2 class="text-lg font-bold text-neutral-text">6. Hubungi Kami</h2>
+          <p>
+            Jika Anda memiliki pertanyaan mengenai kebijakan privasi atau mekanisme keamanan di website ini, Anda dapat merujuk ke halaman <a href="/about" class="text-primary hover:underline">Tentang</a> atau berkontribusi langsung pada repositori kode kami.
+          </p>
+        </div>
+      </section>
+
+    </article>
+  </main>
+
+  <Footer />
+</Layout>

@@ -1,0 +1,66 @@
+---
+interface Recommendation {
+  priority: string;
+  title: string;
+  description: string;
+  action_steps: string[];
+}
+
+interface Props {
+  recommendations: Recommendation[];
+}
+
+const { recommendations } = Astro.props;
+---
+
+<div class="space-y-4">
+  <h3 class="text-lg font-bold text-neutral-text flex items-center space-x-2">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 text-primary" aria-hidden="true">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+    </svg>
+    <span>Rekomendasi Tindakan Keamanan</span>
+  </h3>
+
+  <div class="grid gap-4 md:grid-cols-1">
+    {recommendations.map((rec) => {
+      // Styling badge prioritas
+      let badgeClass = "";
+      if (rec.priority === "Tinggi") {
+        badgeClass = "bg-danger-light text-danger border-danger";
+      } else if (rec.priority === "Sedang") {
+        badgeClass = "bg-primary-light text-primary border-primary";
+      } else {
+        badgeClass = "bg-neutral-bgAlt text-neutral-textMuted border-neutral-border";
+      }
+
+      return (
+        <div class="bg-neutral-bg border border-neutral-border p-6 rounded-lg space-y-4">
+          <div class="flex flex-wrap items-center justify-between gap-2 border-b border-neutral-border pb-3">
+            <h4 class="font-bold text-neutral-text text-base">{rec.title}</h4>
+            <span class={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 border rounded-full ${badgeClass}`}>
+              Prioritas {rec.priority}
+            </span>
+          </div>
+
+          <p class="text-sm text-neutral-textMuted leading-relaxed">
+            {rec.description}
+          </p>
+
+          <div class="space-y-2">
+            <h5 class="text-xs font-bold uppercase tracking-wider text-neutral-text">Langkah Mitigasi:</h5>
+            <ul class="space-y-2 text-sm text-neutral-text" role="list">
+              {rec.action_steps.map((step) => (
+                <li class="flex items-start space-x-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4 text-accent mt-0.5 flex-shrink-0" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                  </svg>
+                  <span>{step}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      );
+    })}
+  </div>
+</div>

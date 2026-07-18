@@ -1,0 +1,43 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+
+const pageTitle = "Halaman Tidak Ditemukan (404)";
+const pageDescription = "Maaf, halaman yang Anda cari tidak tersedia di situs Cek Kebocoran Data.";
+---
+
+<Layout title={pageTitle} description={pageDescription}>
+  <Navbar />
+  
+  <main class="flex-grow flex items-center justify-center py-16 px-4 bg-neutral-bg">
+    <div class="max-w-md w-full text-center space-y-6">
+      
+      <!-- Kode Error -->
+      <span class="text-6xl font-black text-primary select-none block">404</span>
+
+      <div class="space-y-2">
+        <h1 class="text-2xl font-bold text-neutral-text">Halaman Tidak Ditemukan</h1>
+        <p class="text-sm text-neutral-textMuted leading-relaxed">
+          Maaf, halaman yang Anda cari tidak tersedia, telah dihapus, atau dipindahkan ke alamat lain.
+        </p>
+      </div>
+
+      <!-- Tombol Kembali -->
+      <div class="pt-2">
+        <a
+          href="/"
+          class="inline-flex items-center space-x-2 py-3 px-6 bg-primary hover:bg-primary-dark text-white font-semibold rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ring-offset-neutral-bg"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+          </svg>
+          <span>Kembali ke Beranda</span>
+        </a>
+      </div>
+
+    </div>
+  </main>
+
+  <Footer />
+</Layout>

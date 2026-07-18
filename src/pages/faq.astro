@@ -1,0 +1,89 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+import FAQComponent from '../components/FAQ.astro';
+
+const pageTitle = "FAQ Pengecekan Keamanan | Cek Data & Email Bocor";
+const pageDescription = "Temukan jawaban seputar pencarian data bocor, cara kerja cek email bocor, cek password bocor, dan panduan mitigasi keamanan akun yang teretas hacker.";
+
+const faqItems = [
+  {
+    question: "Apa itu layanan Cek Data Bocor?",
+    answer: "Cek Data Bocor adalah platform pencarian gratis bagi masyarakat Indonesia untuk memeriksa apakah alamat email mereka pernah terekspos dalam peristiwa kebocoran data (data breach) publik yang terindeks secara global."
+  },
+  {
+    question: "Bagaimana cara kerja website ini?",
+    answer: "Saat Anda memasukkan email, sistem kami akan menormalisasi email tersebut (trim spasi dan menjadikannya huruf kecil) kemudian mengirimkan permintaan aman ke API database publik. Jika email Anda terdeteksi dalam database kebocoran tersebut, server kami akan menganalisis tingkat risiko dan memberikan saran mitigasi dalam Bahasa Indonesia."
+  },
+  {
+    question: "Apakah website ini menyimpan email atau kata sandi saya?",
+    answer: "Sama sekali tidak. Kami tidak menyimpan alamat email atau riwayat pencarian Anda dalam database permanen kami. Pengecekan dilakukan secara real-time dan hasilnya hanya disimpan di memori sementara (RAM) selama maksimal 10 menit (caching) untuk optimasi kecepatan server sebelum dihapus otomatis."
+  },
+  {
+    question: "Apa yang harus saya lakukan jika email saya dinyatakan 'Bocor'?",
+    answer: "Jangan panik. Langkah pertama adalah segera mengganti kata sandi (password) email tersebut dan semua akun layanan online lain yang menggunakan password yang sama. Selalu gunakan password unik untuk setiap platform digital dan aktifkan Autentikasi Dua Faktor (2FA) menggunakan aplikasi otentikasi."
+  },
+  {
+    question: "Mengapa email saya bisa terdeteksi bocor padahal saya merasa aman?",
+    answer: "Kebocoran data biasanya bukan terjadi karena peranti Anda diretas secara personal, melainkan karena server dari layanan pihak ketiga tempat Anda mendaftarkan akun (seperti e-commerce, forum, media sosial, atau aplikasi game) mengalami pembobolan keamanan. Data database pelanggan mereka dicuri oleh peretas dan disebarkan di forum ilegal."
+  },
+  {
+    question: "Apakah ada biaya untuk menggunakan layanan ini?",
+    answer: "Layanan ini 100% gratis untuk seluruh masyarakat Indonesia tanpa batasan jumlah pengecekan harian, namun kami menerapkan pembatasan akses (rate limiting) maksimal 10 pengecekan per menit per alamat IP guna menghindari serangan bot."
+  },
+  {
+    question: "Apakah website ini berafiliasi dengan pihak pemerintah?",
+    answer: "Tidak. Website ini merupakan proyek independen dan non-komersial. Kami bukan afiliasi resmi dari instansi pemerintah mana pun. Kami hanya menggunakan integrasi API publik secara aman."
+  }
+];
+
+// FAQ Schema untuk optimasi Google Search Rich Snippet
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": faqItems.map(item => ({
+    "@type": "Question",
+    "name": item.question,
+    "acceptedAnswer": {
+      "@type": "Answer",
+      "text": item.answer
+    }
+  }))
+};
+---
+
+<Layout title={pageTitle} description={pageDescription} schemaJson={faqSchema}>
+  <Navbar />
+  
+  <main class="flex-grow py-12 px-4 bg-neutral-bg">
+    <div class="max-w-4xl mx-auto space-y-8">
+      
+      <!-- Header Halaman -->
+      <section class="text-center space-y-3">
+        <h1 class="text-3xl font-black text-neutral-text tracking-tight">
+          Pertanyaan Umum
+        </h1>
+        <p class="text-base text-neutral-textMuted max-w-lg mx-auto">
+          Temukan jawaban atas kekhawatiran Anda mengenai privasi, cara kerja, dan pemulihan akun digital.
+        </p>
+      </section>
+
+      <!-- Daftar FAQ Details/Summary -->
+      <section aria-label="Daftar Pertanyaan">
+        <FAQComponent items={faqItems} />
+      </section>
+
+      <!-- CTA Mitigasi -->
+      <section class="max-w-3xl mx-auto bg-neutral-bgAlt border border-primary/30 p-6 rounded-lg text-center space-y-3">
+        <h2 class="text-base font-bold text-primary">Butuh Informasi Lebih Lengkap?</h2>
+        <p class="text-xs text-neutral-textMuted leading-relaxed max-w-xl mx-auto">
+          Silakan baca halaman <a href="/about" class="font-bold underline text-primary">Tentang Kami</a> untuk memahami visi misi website ini atau pelajari tips pengamanan langsung di internet.
+        </p>
+      </section>
+
+    </div>
+  </main>
+
+  <Footer />
+</Layout>

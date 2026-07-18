@@ -1,0 +1,651 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Navbar from "../components/Navbar.astro";
+import Footer from "../components/Footer.astro";
+import SearchCard from "../components/SearchCard.astro";
+import LoadingState from "../components/LoadingState.astro";
+
+const pageTitle = "Hasil Cek Data Bocor | Pengecekan Email & Akun";
+const pageDescription = "Halaman hasil cek data bocor. Temukan apakah email, akun, atau password Anda pernah mengalami kebocoran data di database internet.";
+---
+
+<Layout title={pageTitle} description={pageDescription}>
+  <Navbar />
+
+  <main class="flex-grow pt-8 pb-16 px-4 bg-neutral-bg">
+    <div class="max-w-2xl mx-auto w-full space-y-8">
+      <!-- Bagian Atas: Form Pencarian Cepat kembali -->
+      <section class="border-b border-neutral-border pb-6">
+        <div class="max-w-xl mx-auto text-center space-y-4">
+          <h1 class="text-xl font-bold text-neutral-text">Periksa Email Lain</h1>
+          <SearchCard />
+        </div>
+      </section>
+
+      <!-- Bagian Hasil Utama -->
+      <section id="results-section" class="space-y-6">
+        <!-- Render Loading Awal -->
+        <div id="loading-container">
+          <LoadingState />
+        </div>
+
+        <!-- Render Target Dynamic Content -->
+        <div id="dynamic-content" class="hidden space-y-6">
+          <!-- Dinamis diisi lewat JavaScript client-side -->
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Modal Donasi QRIS -->
+  <div
+    id="donation-modal"
+    class="hidden fixed inset-0 bg-black/85 backdrop-blur-md z-50 items-center justify-center p-4"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="donation-modal-title"
+  >
+    <div
+      class="bg-neutral-bgAlt border border-neutral-border p-6 rounded-xl max-w-md w-full max-h-[90vh] overflow-y-auto shadow-2xl relative flex flex-col space-y-4 animate-in fade-in zoom-in-95 duration-200"
+    >
+      <div class="flex items-center justify-center space-x-1.5 text-xs text-neutral-textMuted uppercase font-bold tracking-widest select-none">
+        <svg class="w-4 h-2.5 rounded-sm border border-white/20 flex-shrink-0" viewBox="0 0 3 2">
+          <rect width="3" height="1" fill="#E12000"></rect>
+          <rect y="1" width="3" height="1" fill="#FFFFFF"></rect>
+        </svg>
+        <span>Dukungan Developer Indonesia</span>
+        <svg class="w-4 h-2.5 rounded-sm border border-white/20 flex-shrink-0" viewBox="0 0 3 2">
+          <rect width="3" height="1" fill="#E12000"></rect>
+          <rect y="1" width="3" height="1" fill="#FFFFFF"></rect>
+        </svg>
+      </div>
+
+      <!-- Judul -->
+      <div class="text-center space-y-1">
+        <h2 id="donation-modal-title" class="text-lg font-bold text-neutral-text">Bantu Patungan Server Web Ini Yuk! 🥺</h2>
+        <p class="text-xs text-neutral-textMuted leading-relaxed max-w-sm mx-auto">
+          Layanan ini 100% gratis, bebas iklan, dan kami berkomitmen penuh buat nggak ngambil untung atau nyimpan data pribadi kamu.
+        </p>
+      </div>
+
+      <!-- QRIS Code Image Container -->
+      <div
+        class="relative group bg-white p-4 rounded-lg max-w-[220px] mx-auto shadow-md border border-neutral-border transition-transform hover:scale-[1.03] duration-300"
+      >
+        <div class="absolute inset-0 border-2 border-primary/20 rounded-lg animate-pulse pointer-events-none"></div>
+        <img src="/qris.webp" alt="QRIS Donasi Cek Kebocoran Data" class="w-full h-auto object-contain rounded select-none" loading="eager" />
+      </div>
+
+      <!-- Ajakan / Copywriting -->
+      <div class="text-center space-y-2 text-xs leading-relaxed text-neutral-text">
+        <p>
+          Tapi jujur saja, biaya server dan sewa API database bulanan lumayan menguras kantong sukarelawan kami. Uang saweran kamu bakal ngebantu
+          banget biar web ini tetap nyala.
+        </p>
+        <p class="font-semibold text-primary bg-primary-light/30 border border-primary/20 py-1.5 px-3 rounded-md inline-block">
+          ☕ Patungan seharga es teh (Rp 5.000) atau segelas kopi (Rp 10.000) udah nolong banget biar web ini nggak tumbang!
+        </p>
+      </div>
+
+      <!-- Tombol Tutup dengan Countdown -->
+      <button
+        id="close-donation-btn"
+        disabled
+        class="w-full py-3 px-4 bg-primary/20 text-neutral-textMuted font-semibold rounded-md cursor-not-allowed transition-all flex items-center justify-center space-x-2 text-sm"
+        aria-label="Tutup popup donasi"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="2.5"
+          stroke="currentColor"
+          class="w-4 h-4 animate-spin flex-shrink-0"
+          id="close-btn-spinner"
+        >
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path
+            class="opacity-75"
+            fill="currentColor"
+            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        <span id="close-btn-text">Tutup (5s)</span>
+      </button>
+    </div>
+  </div>
+
+  <Footer />
+
+  <script>
+    // Ambil elemen DOM
+    const loadingContainer = document.getElementById("loading-container");
+    const dynamicContent = document.getElementById("dynamic-content");
+    const resultsSection = document.getElementById("results-section");
+
+    // HTML untuk Kartu Donasi Inline yang disematkan di halaman hasil
+    const donationCardHtml = `
+      <div class="bg-neutral-bgAlt border border-primary/10 p-6 rounded-lg shadow-sm flex flex-col sm:flex-row items-center gap-6" role="complementary" aria-label="Donasi Sukarela">
+        <!-- QRIS Image -->
+        <div class="relative bg-white p-3 rounded-lg max-w-[130px] w-full mx-auto sm:mx-0 shadow-md border border-neutral-border flex-shrink-0 transition-transform hover:scale-105 duration-200">
+          <img src="/qris.webp" alt="QRIS Donasi" class="w-full h-auto object-contain rounded select-none" />
+        </div>
+        <!-- Copywriting -->
+        <div class="space-y-2 flex-1 text-center sm:text-left">
+          <div class="flex items-center justify-center sm:justify-start space-x-1.5 text-[10px] text-neutral-textMuted uppercase font-bold tracking-widest select-none">
+            <span>Saweran Bulanan Server</span>
+          </div>
+          <h4 class="font-bold text-neutral-text text-base">Bantu Patungan Server Web Ini Yuk! 🥺</h4>
+          <p class="text-xs text-neutral-textMuted leading-relaxed">
+            Biaya server dan API bulanan didanai mandiri oleh sukarelawan kami agar web ini tetap gratis & bebas iklan. Patungan seharga es teh (Rp 5.000) atau segelas kopi (Rp 10.000) lewat scan QRIS sangat berarti biar kami nggak tumbang!
+          </p>
+        </div>
+      </div>
+    `;
+
+    // Format Helper
+    const formatNumber = (num: number) => {
+      return new Intl.NumberFormat("id-ID").format(num);
+    };
+
+    const formatDateId = (dateStr: string | null) => {
+      if (!dateStr) return "Tidak tersedia";
+      const trimmed = dateStr.trim();
+      // Handle year-only format (e.g. "2026")
+      if (/^\d{4}$/.test(trimmed)) return `Tahun ${trimmed}`;
+      try {
+        const date = new Date(trimmed);
+        if (isNaN(date.getTime())) return trimmed;
+        return new Intl.DateTimeFormat("id-ID", {
+          day: "numeric",
+          month: "long",
+          year: "numeric",
+        }).format(date);
+      } catch {
+        return trimmed;
+      }
+    };
+
+    // Sanitisasi HTML untuk mencegah Reflected XSS
+    const escapeHtml = (unsafe: string) => {
+      if (!unsafe) return "";
+      return unsafe
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    };
+
+    // Helper untuk deskripsi keamanan kata sandi berdasarkan tingkat risiko
+    const getPasswordRiskDescription = (risk: string | null) => {
+      if (!risk) return "";
+      const r = risk.toLowerCase();
+      if (r.includes("teks polos") || r.includes("plaintext")) {
+        return "Layanan ini menyimpan kata sandi dalam format teks polos (tanpa pengamanan). Segera ubah password Anda karena sangat mudah disalahgunakan.";
+      }
+      if (r.includes("lemah") || r.includes("easytocrack")) {
+        return "Layanan ini menggunakan metode pengamanan sandi yang lemah. Kata sandi Anda berisiko tinggi didekripsi oleh peretas. Segera lakukan perubahan password.";
+      }
+      if (r.includes("kuat") || r.includes("stronghash") || r.includes("hardtocrack") || r.includes("terenkripsi")) {
+        return "Layanan ini menggunakan metode pengamanan yang kuat untuk melindungi kata sandi Anda. Meskipun sulit didekripsi langsung oleh peretas, tetap disarankan untuk mengubah password Anda sebagai tindakan pencegahan.";
+      }
+      return "Status pengamanan kata sandi pada kebocoran ini tidak diketahui secara pasti. Demi keamanan, Anda disarankan untuk mengganti password Anda.";
+    };
+
+    // Helper untuk style box keamanan kata sandi
+    const getPasswordRiskStyle = (risk: string | null) => {
+      if (!risk) return { boxClass: "", textClass: "", iconColor: "" };
+      const r = risk.toLowerCase();
+      if (r.includes("kuat") || r.includes("stronghash") || r.includes("hardtocrack") || r.includes("terenkripsi")) {
+        return {
+          boxClass: "bg-primary-light border-primary",
+          textClass: "text-primary",
+          iconColor: "text-primary",
+        };
+      }
+      return {
+        boxClass: "bg-danger-light border-danger",
+        textClass: "text-danger",
+        iconColor: "text-danger",
+      };
+    };
+
+    // Fungsi untuk merender Tampilan Bersih (Tidak Ditemukan Kebocoran)
+    function renderCleanState(email: string, score: number, rating: string, recommendations: any[]) {
+      if (!dynamicContent) return;
+
+      // Render RiskBadge
+      let colorClass = "text-accent"; // Hijau untuk Aman
+      let borderClass = "border-accent";
+
+      let riskBadgeHtml = `
+      <div class="device-stack border p-6 rounded-lg flex flex-col sm:flex-row items-center justify-between gap-6 bg-neutral-bg ${borderClass}" aria-label="Tingkat Risiko Keamanan: ${rating}">
+        <div class="space-y-2 text-center sm:text-left">
+          <span class="text-xs font-bold uppercase tracking-wider text-neutral-textMuted">Tingkat Risiko</span>
+          <h2 class="text-3xl font-extrabold tracking-tight ${colorClass}">
+            ${rating}
+          </h2>
+          <p class="text-sm text-neutral-textMuted max-w-md">
+            Email Anda aman. Tidak terdeteksi kebocoran data pada database yang kami pantau.
+          </p>
+        </div>
+        <div class="relative flex items-center justify-center flex-shrink-0" aria-label="Skor Risiko: ${score} dari 100">
+          <svg class="w-24 h-24 transform -rotate-90">
+            <circle cx="48" cy="48" r="40" stroke="#334155" stroke-width="8" fill="transparent" />
+            <circle cx="48" cy="48" r="40" stroke="currentColor" stroke-width="8" fill="transparent"
+              stroke-dasharray="${2 * Math.PI * 40}" stroke-dashoffset="${2 * Math.PI * 40 * (1 - score / 100)}" class="${colorClass}" />
+          </svg>
+          <div class="absolute flex flex-col items-center justify-center">
+            <span class="text-2xl font-black text-neutral-text">${score}</span>
+            <span class="text-[10px] font-bold uppercase text-neutral-textMuted tracking-tight">Skor</span>
+          </div>
+        </div>
+      </div>
+    `;
+
+      // Render Success Card "Tidak Ditemukan"
+      let successCardHtml = `
+      <div class="bg-neutral-bg border border-accent p-8 rounded-lg text-center space-y-4">
+        <div class="inline-flex p-3 bg-accent-light rounded-full text-accent">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-8 h-8">
+            <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+          </svg>
+        </div>
+        <div class="space-y-2">
+          <h3 class="text-xl font-bold text-neutral-text">Tidak Ditemukan</h3>
+          <p class="text-sm text-neutral-textMuted max-w-md mx-auto leading-relaxed">
+            Email <strong class="text-neutral-text">${escapeHtml(email)}</strong> tidak ditemukan pada database kebocoran yang tersedia.
+          </p>
+        </div>
+      </div>
+    `;
+
+      // Render Recommendations
+      let recsHtml = `
+      <div class="space-y-4">
+        <h3 class="text-lg font-bold text-neutral-text flex items-center space-x-2">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 text-primary">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+          </svg>
+          <span>Rekomendasi Tindakan Keamanan</span>
+        </h3>
+        <div class="grid gap-4 md:grid-cols-1">
+          ${recommendations
+            .map(
+              (rec: any) => `
+            <div class="bg-neutral-bg border border-neutral-border p-6 rounded-lg space-y-4">
+              <div class="flex flex-wrap items-center justify-between gap-2 border-b border-neutral-border pb-3">
+                <h4 class="font-bold text-neutral-text text-base">${rec.title}</h4>
+                <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 border rounded-full bg-neutral-bgAlt text-neutral-textMuted border-neutral-border">
+                  Prioritas ${rec.priority}
+                </span>
+              </div>
+              <p class="text-sm text-neutral-textMuted leading-relaxed">${rec.description}</p>
+              <div class="space-y-2">
+                <h5 class="text-xs font-bold uppercase tracking-wider text-neutral-text">Langkah Mitigasi:</h5>
+                <ul class="space-y-2 text-sm text-neutral-text" role="list">
+                  ${rec.action_steps
+                    .map(
+                      (step: any) => `
+                    <li class="flex items-start space-x-2">
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4 text-accent mt-0.5 flex-shrink-0">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                      </svg>
+                      <span>${step}</span>
+                    </li>
+                  `,
+                    )
+                    .join("")}
+                </ul>
+              </div>
+            </div>
+          `,
+            )
+            .join("")}
+        </div>
+      </div>
+    `;
+
+      dynamicContent.innerHTML = `
+      ${riskBadgeHtml}
+      ${successCardHtml}
+      ${donationCardHtml}
+      ${recsHtml}
+    `;
+      dynamicContent.classList.remove("hidden");
+    }
+
+    // Fungsi untuk merender Tampilan Kebocoran (Ditemukan)
+    function renderBreachedState(email: string, score: number, rating: string, breaches: any[], recommendations: any[]) {
+      if (!dynamicContent) return;
+
+      // RiskBadge Color
+      let colorClass = "text-danger"; // Merah default
+      let borderClass = "border-danger";
+
+      if (rating === "Rendah") {
+        colorClass = "text-primary";
+        borderClass = "border-primary";
+      } else if (rating === "Sedang") {
+        colorClass = "text-neutral-text";
+        borderClass = "border-neutral-border";
+      }
+
+      let riskBadgeHtml = `
+      <div class="device-stack border p-6 rounded-lg flex flex-col sm:flex-row items-center justify-between gap-6 bg-neutral-bg ${borderClass}" aria-label="Tingkat Risiko Keamanan: ${rating}">
+        <div class="space-y-2 text-center sm:text-left">
+          <span class="text-xs font-bold uppercase tracking-wider text-neutral-textMuted">Tingkat Risiko</span>
+          <h2 class="text-3xl font-extrabold tracking-tight ${colorClass}">
+            ${rating}
+          </h2>
+          <p class="text-sm text-neutral-textMuted max-w-md">
+            ${rating === "Rendah" ? "Ditemukan kebocoran minimal. Tindakan pengamanan dasar sudah cukup." : ""}
+            ${rating === "Sedang" ? "Email Anda bocor di beberapa platform. Perlu waspada dan lakukan pengecekan mandiri." : ""}
+            ${rating === "Tinggi" ? "Email Anda terdeteksi dalam banyak kebocoran data. Segera lakukan tindakan pengamanan." : ""}
+            ${rating === "Kritis" ? "Sangat berbahaya! Kredensial sensitif Anda bocor secara signifikan. Amankan akun Anda sekarang juga." : ""}
+          </p>
+        </div>
+        <div class="relative flex items-center justify-center flex-shrink-0" aria-label="Skor Risiko: ${score} dari 100">
+          <svg class="w-24 h-24 transform -rotate-90">
+            <circle cx="48" cy="48" r="40" stroke="#334155" stroke-width="8" fill="transparent" />
+            <circle cx="48" cy="48" r="40" stroke="currentColor" stroke-width="8" fill="transparent"
+              stroke-dasharray="${2 * Math.PI * 40}" stroke-dashoffset="${2 * Math.PI * 40 * (1 - score / 100)}" class="${colorClass}" />
+          </svg>
+          <div class="absolute flex flex-col items-center justify-center">
+            <span class="text-2xl font-black text-neutral-text">${score}</span>
+            <span class="text-[10px] font-bold uppercase text-neutral-textMuted tracking-tight">Skor</span>
+          </div>
+        </div>
+      </div>
+    `;
+
+      // Recommendations Html
+      let recsHtml = `
+      <div class="space-y-4">
+        <h3 class="text-lg font-bold text-neutral-text flex items-center space-x-2">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 text-primary">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+          </svg>
+          <span>Rekomendasi Tindakan Keamanan</span>
+        </h3>
+        <div class="grid gap-4 md:grid-cols-1">
+          ${recommendations
+            .map((rec: any) => {
+              let bClass = "";
+              if (rec.priority === "Tinggi") {
+                bClass = "bg-danger-light text-danger border-danger";
+              } else if (rec.priority === "Sedang") {
+                bClass = "bg-primary-light text-primary border-primary";
+              } else {
+                bClass = "bg-neutral-bgAlt text-neutral-textMuted border-neutral-border";
+              }
+              return `
+              <div class="bg-neutral-bg border border-neutral-border p-6 rounded-lg space-y-4">
+                <div class="flex flex-wrap items-center justify-between gap-2 border-b border-neutral-border pb-3">
+                  <h4 class="font-bold text-neutral-text text-base">${rec.title}</h4>
+                  <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 border rounded-full ${bClass}">
+                    Prioritas ${rec.priority}
+                  </span>
+                </div>
+                <p class="text-sm text-neutral-textMuted leading-relaxed">${rec.description}</p>
+                <div class="space-y-2">
+                  <h5 class="text-xs font-bold uppercase tracking-wider text-neutral-text">Langkah Mitigasi:</h5>
+                  <ul class="space-y-2 text-sm text-neutral-text" role="list">
+                    ${rec.action_steps
+                      .map(
+                        (step: any) => `
+                      <li class="flex items-start space-x-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4 text-accent mt-0.5 flex-shrink-0">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                        </svg>
+                        <span>${step}</span>
+                      </li>
+                    `,
+                      )
+                      .join("")}
+                  </ul>
+                </div>
+              </div>
+            `;
+            })
+            .join("")}
+        </div>
+      </div>
+    `;
+
+      // Breaches List Html
+      let breachesHtml = `
+      <div class="space-y-4">
+        <div class="flex items-center justify-between border-b border-neutral-border pb-2">
+          <h3 class="text-lg font-bold text-neutral-text flex items-center space-x-2">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 text-danger">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m0-10.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.75c0 5.592 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.57-.598-3.75h-.152c-3.196 0-6.1-1.25-8.25-3.286Zm0 13.036h.008v.008H12v-.008Z" />
+            </svg>
+            <span>Daftar Sumber Kebocoran (${breaches.length})</span>
+          </h3>
+          <span class="text-xs text-neutral-textMuted select-none">
+            Email: <strong class="text-neutral-text">${escapeHtml(email)}</strong>
+          </span>
+        </div>
+        <div class="space-y-4" role="list">
+          ${breaches
+            .map(
+              (b: any) => `
+            <div class="bg-neutral-bg border border-neutral-border p-6 rounded-lg space-y-4 relative hover:border-primary transition-colors" role="listitem">
+              <div class="flex items-start space-x-4">
+                <div class="w-12 h-12 bg-neutral-bgAlt border border-neutral-border rounded flex items-center justify-center p-1 overflow-hidden flex-shrink-0">
+                  ${
+                    b.logo
+                      ? `
+                    <img src="${b.logo}" alt="Logo ${b.breach}" class="w-full h-full object-contain" loading="lazy" />
+                  `
+                      : `
+                    <div class="w-full h-full flex items-center justify-center text-xs font-black text-primary bg-primary-light">
+                      ${b.breach.substring(0, 2).toUpperCase()}
+                    </div>
+                  `
+                  }
+                </div>
+                <div class="space-y-1 flex-1 min-w-0">
+                  <div class="flex flex-wrap items-center gap-x-2 gap-y-1">
+                    <h4 class="font-bold text-neutral-text text-base truncate">${b.breach}</h4>
+                    ${b.domain ? `<span class="text-xs text-neutral-textMuted font-mono">(${b.domain})</span>` : ""}
+                  </div>
+                  <div class="flex flex-wrap gap-x-4 gap-y-1 text-xs text-neutral-textMuted">
+                    <span>Kategori: <strong class="text-neutral-text">${b.industry}</strong></span>
+                    <span>Data Bocor: <strong class="text-neutral-text">${formatNumber(b.records)} akun</strong></span>
+                  </div>
+                </div>
+              </div>
+              <hr class="border-neutral-border" />
+              <div class="space-y-2 text-sm text-neutral-text">
+                <p class="leading-relaxed text-neutral-textMuted">${b.details}</p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 text-xs">
+                  <div class="bg-neutral-bgAlt p-3 border border-neutral-border rounded">
+                    <span class="block font-bold text-neutral-textMuted uppercase tracking-wider mb-1">Tanggal Terjadi</span>
+                    <span class="font-semibold text-neutral-text">${formatDateId(b.breach_date)}</span>
+                  </div>
+                  <div class="bg-neutral-bgAlt p-3 border border-neutral-border rounded">
+                    <span class="block font-bold text-neutral-textMuted uppercase tracking-wider mb-1">Data yang Bocor</span>
+                    <span class="font-semibold text-neutral-text break-words">${b.xposed_data}</span>
+                  </div>
+                </div>
+                ${
+                  b.password_risk && b.password_risk.toLowerCase() !== "none"
+                    ? (() => {
+                        const style = getPasswordRiskStyle(b.password_risk);
+                        const desc = getPasswordRiskDescription(b.password_risk);
+                        return `
+                    <div class="p-3 border rounded text-xs flex items-start space-x-2 mt-2 ${style.boxClass}">
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 flex-shrink-0 mt-0.5 ${style.iconColor}">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
+                      </svg>
+                      <div>
+                        <strong class="${style.textClass}">Keamanan Password: ${b.password_risk}</strong>
+                        <p class="text-neutral-textMuted text-[11px] mt-0.5">
+                          ${desc}
+                        </p>
+                      </div>
+                    </div>
+                  `;
+                      })()
+                    : ""
+                }
+              </div>
+            </div>
+          `,
+            )
+            .join("")}
+        </div>
+      </div>
+    `;
+
+      dynamicContent.innerHTML = `
+      ${riskBadgeHtml}
+      ${breachesHtml}
+      ${donationCardHtml}
+      ${recsHtml}
+    `;
+      dynamicContent.classList.remove("hidden");
+    }
+
+    // Fungsi untuk merender Tampilan Error
+    function renderErrorState(message: string, statusCode?: number) {
+      if (!dynamicContent) return;
+      let isRateLimit = statusCode === 429;
+
+      dynamicContent.innerHTML = `
+      <div class="bg-neutral-bg border border-danger p-6 rounded-lg max-w-xl mx-auto w-full text-center space-y-4 shadow-sm" role="alert">
+        <div class="inline-flex p-3 bg-danger-light rounded-full text-danger">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-8 h-8">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m0-10.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.75c0 5.592 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.57-.598-3.75h-.152c-3.196 0-6.1-1.25-8.25-3.286Zm0 13.036h.008v.008H12v-.008Z" />
+          </svg>
+        </div>
+        <div class="space-y-2">
+          <h3 class="text-lg font-bold text-neutral-text">
+            ${isRateLimit ? "Batas Permintaan Terlampaui" : "Terjadi Kesalahan"}
+          </h3>
+          <p class="text-sm text-neutral-textMuted leading-relaxed max-w-md mx-auto">
+            ${escapeHtml(message)}
+          </p>
+        </div>
+        <div class="pt-2">
+          <a href="/" class="inline-flex items-center space-x-2 py-2.5 px-5 border border-neutral-border text-sm font-semibold rounded-md text-neutral-text bg-neutral-bg hover:bg-neutral-bgAlt transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3" />
+            </svg>
+            <span>Kembali dan Coba Lagi</span>
+          </a>
+        </div>
+      </div>
+    `;
+      dynamicContent.classList.remove("hidden");
+    }
+
+    // Fungsi untuk increment check counter dan tampilkan donasi setiap kelipatan 5x
+    function incrementAndCheckDonation() {
+      let checkCount = parseInt(localStorage.getItem("check_count") || "0");
+      checkCount += 1;
+      localStorage.setItem("check_count", checkCount.toString());
+
+      if (checkCount % 5 === 0) {
+        showDonationModal();
+      }
+    }
+
+    function showDonationModal() {
+      const modal = document.getElementById("donation-modal");
+      const closeBtn = document.getElementById("close-donation-btn");
+      const spinner = document.getElementById("close-btn-spinner");
+      const btnText = document.getElementById("close-btn-text");
+
+      if (!modal || !closeBtn) return;
+
+      // Tampilkan modal
+      modal.classList.remove("hidden");
+      modal.classList.add("flex");
+      document.body.style.overflow = "hidden"; // Mencegah scrolling halaman belakang
+
+      let countdown = 5;
+      closeBtn.setAttribute("disabled", "true");
+      if (spinner) spinner.classList.remove("hidden");
+      if (btnText) btnText.textContent = `Tutup (${countdown}s)`;
+
+      const interval = setInterval(() => {
+        countdown -= 1;
+        if (countdown > 0) {
+          if (btnText) btnText.textContent = `Tutup (${countdown}s)`;
+        } else {
+          clearInterval(interval);
+          closeBtn.removeAttribute("disabled");
+          if (spinner) spinner.classList.add("hidden");
+          if (btnText) btnText.textContent = "Lewati, biarkan developer bayar server sendirian 😢";
+          closeBtn.classList.remove("bg-primary/20", "text-neutral-textMuted", "cursor-not-allowed");
+          closeBtn.classList.add("bg-primary", "hover:bg-primary-dark", "text-white", "cursor-pointer");
+        }
+      }, 1000);
+    }
+
+    // Event listener untuk tombol tutup modal donasi
+    document.getElementById("close-donation-btn")?.addEventListener("click", () => {
+      const modal = document.getElementById("donation-modal");
+      if (modal) {
+        modal.classList.add("hidden");
+        modal.classList.remove("flex");
+        document.body.style.overflow = ""; // Aktifkan kembali scrolling
+      }
+    });
+
+    // Panggil API Backend menggunakan Fetch
+    async function performCheck() {
+      const params = new URLSearchParams(window.location.search);
+      const email = params.get("email");
+
+      if (!email) {
+        if (loadingContainer) loadingContainer.classList.add("hidden");
+        renderErrorState("Parameter email tidak ditemukan. Masukkan email di form pencarian di atas.");
+        return;
+      }
+
+      try {
+        const response = await fetch(`/api/check?email=${encodeURIComponent(email)}`);
+
+        if (loadingContainer) loadingContainer.classList.add("hidden");
+
+        if (response.status === 429) {
+          const data = await response.json();
+          renderErrorState(data.detail || "Terlalu banyak pengecekan email. Silakan tunggu 1 menit.", 429);
+          return;
+        }
+
+        if (response.status === 422) {
+          renderErrorState("Format email yang Anda masukkan tidak valid. Harap periksa kembali.");
+          return;
+        }
+
+        if (!response.ok) {
+          const data = await response.json().catch(() => ({}));
+          renderErrorState(data.detail || "Terjadi masalah saat memanggil database kebocoran. Silakan coba sesaat lagi.");
+          return;
+        }
+
+        const data = await response.json();
+
+        if (data.is_breached) {
+          renderBreachedState(data.email, data.risk_assessment.score, data.risk_assessment.rating, data.breaches, data.recommendations);
+        } else {
+          renderCleanState(data.email, data.risk_assessment.score, data.risk_assessment.rating, data.recommendations);
+        }
+
+        // Jalankan verifikasi donasi setelah rendering hasil sukses
+        incrementAndCheckDonation();
+      } catch (err) {
+        if (loadingContainer) loadingContainer.classList.add("hidden");
+        renderErrorState("Gagal menghubungi server. Periksa koneksi internet Anda dan coba lagi.");
+      }
+    }
+
+    // Jalankan pencarian otomatis ketika dokumen siap
+    document.addEventListener("DOMContentLoaded", performCheck);
+  </script>
+</Layout>
