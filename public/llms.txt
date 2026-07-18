@@ -1,22 +1,167 @@
 # Cek Data Bocor
 
-> Free service for Indonesian users to check if their accounts or emails have been compromised in global public data breaches.
+> Free, ad-free, privacy-first service for Indonesian users to check if their email accounts have been compromised in publicly known data breaches. Built and maintained independently by an Indonesian developer.
 
 ## Site Details
-* **Domain**: https://databocor.web.id
-* **Language**: Indonesian (User Interface & Recommendations)
-* **API Engine**: Integrates with public breach databases securely with local risk assessments and smart mitigations.
+
+- **Domain**: https://databocor.web.id
+- **Language**: Indonesian (Bahasa Indonesia) — UI, risk analysis, and mitigation recommendations are all localized.
+- **Purpose**: Cybersecurity awareness tool that checks emails against global breach databases and returns risk scores with actionable remediation steps.
+
+## Main Pages
+
+- https://databocor.web.id/
+  Home page — email search form to check for data breaches.
+
+- https://databocor.web.id/check
+  Results page — displays breach details, risk score, risk rating, and security recommendations after an email check.
+
+- https://databocor.web.id/about
+  About this project — mission, data sources, and security commitments.
+
+- https://databocor.web.id/faq
+  Frequently Asked Questions — how the service works, privacy guarantees, and account recovery guidance.
+
+- https://databocor.web.id/privacy
+  Privacy Policy — no-storage policy, caching details, and rate limiting disclosure.
+
+- https://databocor.web.id/contact
+  Contact — developer email for questions, feedback, or collaboration.
 
 ## Tech Stack
-* **Frontend**: Astro (Static Site Generation), TypeScript, Tailwind CSS.
-* **Backend**: FastAPI (Python 3.13), Uvicorn, Pydantic, HTTPX.
-* **Architecture**: Clean separation of Static Edge UI and Serverless API.
+
+- **Frontend**: Astro 4.x (Static Site Generation), TypeScript, Tailwind CSS 3.x.
+- **Backend**: FastAPI (Python 3.13), Uvicorn, Pydantic v2, HTTPX.
+- **Deployment**: Vercel (Edge static + Serverless API functions).
+- **Architecture**: Clean separation of Static Edge UI and Serverless Python API.
 
 ## Public API Endpoints
-* `POST /api/check`: Evaluates breach status, risk score (0-100), risk rating, and returns mitigation recommendations in Indonesian. Expects request body: `{"email": "<email>"}`.
-  * Rate-limited: max 10 requests/minute per IP.
-  * Cache: 10-minute TTL in-memory.
+
+### `POST /api/check` — Check Email Breach Status
+
+Evaluates whether an email address has appeared in known data breaches. Returns breach details, a risk score (0–100), a risk rating, and mitigation recommendations — all in Indonesian.
+
+**Request:**
+
+```json
+{
+  "email": "user@example.com"
+}
+```
+
+**Response (breached):**
+
+```json
+{
+  "email": "user@example.com",
+  "is_breached": true,
+  "status": "success",
+  "breaches_count": 3,
+  "breaches": [
+    {
+      "breach": "ExampleService",
+      "details": "Deskripsi kebocoran dalam Bahasa Indonesia.",
+      "domain": "example.com",
+      "industry": "Technology",
+      "logo": "https://example.com/logo.png",
+      "breach_date": "2024-01-15",
+      "records": 5000000,
+      "password_risk": "Lemah (Mudah Didekripsi)",
+      "xposed_data": "Email, Password, Username"
+    }
+  ],
+  "risk_assessment": {
+    "score": 72,
+    "rating": "Tinggi",
+    "breakdown": {
+      "breaches_count": 3,
+      "has_password": true,
+      "has_phone": false,
+      "has_username": true,
+      "is_recent": true,
+      "is_critical": false
+    }
+  },
+  "recommendations": [
+    {
+      "priority": "Tinggi",
+      "title": "Ganti Password Segera",
+      "description": "Ubah kata sandi pada layanan yang terdampak.",
+      "action_steps": ["Gunakan password unik", "Aktifkan 2FA"]
+    }
+  ],
+  "cached": false,
+  "timestamp": 1752883200.0
+}
+```
+
+**Response (clean):**
+
+```json
+{
+  "email": "user@example.com",
+  "is_breached": false,
+  "status": "clean",
+  "breaches_count": 0,
+  "breaches": [],
+  "risk_assessment": {
+    "score": 0,
+    "rating": "Aman",
+    "breakdown": {
+      "breaches_count": 0,
+      "has_password": false,
+      "has_phone": false,
+      "has_username": false,
+      "is_recent": false,
+      "is_critical": false
+    }
+  },
+  "recommendations": [],
+  "cached": false,
+  "timestamp": 1752883200.0
+}
+```
+
+**Rate Limit:** Max 10 requests per minute per IP. Returns HTTP 429 with `Retry-After` header when exceeded.
+**Cache:** Results are cached in-memory for 10 minutes (TTL).
+
+### `GET /api/health` — Health Check
+
+Returns `{"status": "ok"}` when the API is operational.
+
+## Risk Rating Scale
+
+| Score   | Rating (ID) | Meaning                                    |
+| ------- | ----------- | ------------------------------------------ |
+| 0       | Aman        | No breaches found                          |
+| 1–25    | Rendah      | Minimal exposure, basic precautions enough |
+| 26–50   | Sedang      | Moderate exposure, vigilance needed        |
+| 51–75   | Tinggi      | Significant exposure, act now              |
+| 76–100  | Kritis      | Critical exposure, immediate action needed |
 
 ## Security Policies
-* No storage of email addresses or search history.
-* Safe header validation (CSP, HSTS, X-Frame-Options).
+
+- No storage of email addresses or search history in any persistent database.
+- Results cached in RAM only (max 10 minutes), then auto-deleted.
+- Safe response headers enforced: CSP, HSTS, X-Frame-Options, X-Content-Type-Options.
+- Input validation via Pydantic; internal stack traces hidden from API responses.
+
+## Source Code
+
+- https://github.com/Irfan3006/Cek-Data-Bocor
+
+## Contact
+
+- **Developer**: Irfan Syarifudin
+- **Email**: irfansyarifudin79@gmail.com
+
+## Metadata
+
+- **Version**: 1.0.0
+- **Last Updated**: 2026-07-19
+- **License**: MIT
+- **Spec**: llmstxt (https://llmstxt.org)
+
+## Optional
+
+- [llms-full.txt](https://databocor.web.id/llms-full.txt): Extended documentation with full API schemas, architecture details, risk scoring algorithm, and FAQ content for deeper AI/RAG consumption.
