@@ -75,6 +75,7 @@ const { initialValue = "" } = Astro.props;
     input.classList.remove("border-danger");
 
     sessionStorage.setItem("check_email", cleanEmail);
+    sessionStorage.setItem("is_new_search", "true");
     window.location.href = "/check";
   });
 

@@ -542,14 +542,19 @@ const pageDescription = "Halaman hasil cek data bocor. Temukan apakah email, aku
       dynamicContent.classList.remove("hidden");
     }
 
-    // Fungsi untuk increment check counter dan tampilkan donasi setiap kelipatan 5x
+    // Fungsi untuk increment check counter dan tampilkan donasi setiap kelipatan 5x pencarian baru
     function incrementAndCheckDonation() {
-      let checkCount = parseInt(localStorage.getItem("check_count") || "0");
-      checkCount += 1;
-      localStorage.setItem("check_count", checkCount.toString());
+      const isNewSearch = sessionStorage.getItem("is_new_search");
+      if (isNewSearch === "true") {
+        sessionStorage.removeItem("is_new_search");
+        
+        let checkCount = parseInt(localStorage.getItem("check_count") || "0");
+        checkCount += 1;
+        localStorage.setItem("check_count", checkCount.toString());
 
-      if (checkCount % 5 === 0) {
-        showDonationModal();
+        if (checkCount % 5 === 0) {
+          showDonationModal();
+        }
       }
     }
 
