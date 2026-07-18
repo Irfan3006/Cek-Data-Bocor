@@ -14,10 +14,11 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
         
         response.headers["Content-Security-Policy"] = (
             "default-src 'self'; "
-            "connect-src 'self' https://api.xposedornot.com; "
-            "img-src 'self' data: https://api.xposedornot.com; "
-            "script-src 'self' 'unsafe-inline'; "
-            "style-src 'self' 'unsafe-inline'; "
+            "connect-src 'self' https://api.xposedornot.com https://www.google-analytics.com https://www.googletagmanager.com; "
+            "img-src 'self' data: https://api.xposedornot.com https://www.google-analytics.com https://www.googletagmanager.com; "
+            "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com; "
+            "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
+            "font-src 'self' https://fonts.gstatic.com; "
             "frame-ancestors 'none';"
         )
         
