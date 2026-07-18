@@ -50,12 +50,12 @@ const { initialValue = "" } = Astro.props;
   const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
 
   form?.addEventListener("submit", (event) => {
+    event.preventDefault();
     if (!input || !errorMsg) return;
 
     const rawVal = input.value.trim();
     
     if (!rawVal) {
-      event.preventDefault();
       errorMsg.textContent = "Alamat email wajib diisi.";
       errorMsg.classList.remove("hidden");
       input.classList.add("border-danger");
@@ -63,16 +63,19 @@ const { initialValue = "" } = Astro.props;
     }
 
     if (!emailRegex.test(rawVal)) {
-      event.preventDefault();
       errorMsg.textContent = "Format email tidak valid. Masukkan email yang benar.";
       errorMsg.classList.remove("hidden");
       input.classList.add("border-danger");
       return;
     }
 
-    input.value = rawVal.toLowerCase();
+    const cleanEmail = rawVal.toLowerCase();
+    input.value = cleanEmail;
     errorMsg.classList.add("hidden");
     input.classList.remove("border-danger");
+
+    sessionStorage.setItem("check_email", cleanEmail);
+    window.location.href = "/check";
   });
 
   input?.addEventListener("input", () => {

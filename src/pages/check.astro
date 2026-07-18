@@ -598,12 +598,22 @@ const pageDescription = "Halaman hasil cek data bocor. Temukan apakah email, aku
 
     // Panggil API Backend menggunakan Fetch
     async function performCheck() {
-      const params = new URLSearchParams(window.location.search);
-      const email = params.get("email");
+      let email = sessionStorage.getItem("check_email");
+      if (!email) {
+        const params = new URLSearchParams(window.location.search);
+        email = params.get("email");
+      }
+
+      if (email) {
+        const searchInput = document.getElementById("email") as HTMLInputElement | null;
+        if (searchInput) {
+          searchInput.value = email;
+        }
+      }
 
       if (!email) {
         if (loadingContainer) loadingContainer.classList.add("hidden");
-        renderErrorState("Parameter email tidak ditemukan. Masukkan email di form pencarian di atas.");
+        renderErrorState("Masukkan email Anda di form pencarian di atas untuk memulai pemeriksaan.");
         return;
       }
 
