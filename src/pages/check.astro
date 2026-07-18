@@ -553,12 +553,12 @@ const pageDescription = "Halaman hasil cek data bocor. Temukan apakah email, aku
         localStorage.setItem("check_count", checkCount.toString());
 
         if (checkCount % 5 === 0) {
-          showDonationModal();
+          showDonationModal(checkCount);
         }
       }
     }
 
-    function showDonationModal() {
+    function showDonationModal(checkCount) {
       const modal = document.getElementById("donation-modal");
       const closeBtn = document.getElementById("close-donation-btn");
       const spinner = document.getElementById("close-btn-spinner");
@@ -571,7 +571,7 @@ const pageDescription = "Halaman hasil cek data bocor. Temukan apakah email, aku
       modal.classList.add("flex");
       document.body.style.overflow = "hidden"; // Mencegah scrolling halaman belakang
 
-      let countdown = 5;
+      let countdown = checkCount;
       closeBtn.setAttribute("disabled", "true");
       if (spinner) spinner.classList.remove("hidden");
       if (btnText) btnText.textContent = `Tutup (${countdown}s)`;
