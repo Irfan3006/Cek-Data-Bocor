@@ -126,8 +126,8 @@ class TranslatorService:
     async def translate_batch(self, texts: list[str]) -> list[str]:
         """
         Terjemahkan daftar teks secara batch untuk optimalisasi performa.
-        Memanfaatkan cache untuk teks yang sudah pernah diterjemahkan.
-        Teks yang belum ada di cache akan digabung dan diterjemahkan dalam satu request.
+        Membagi daftar teks ke dalam beberapa chunk dengan batasan maksimal karakter
+        dan membatasi request konkruen menggunakan Semaphore untuk menghindari rate-limit Google.
         """
         if not texts:
             return []
@@ -153,38 +153,68 @@ class TranslatorService:
         if not uncached_texts:
             return results
 
+        max_chars = 4000
         delimiter = " ||| "
-        joined_text = delimiter.join(uncached_texts)
-        
-        try:
-            translated_joined = await self.translate(joined_text)
-            
-            parts = re.split(r'\s*\|\|\|\s*', translated_joined)
-            
-            if len(parts) == len(uncached_texts):
-                for idx, part_text in zip(uncached_indices, parts):
-                    part_clean = part_text.strip()
-                    results[idx] = part_clean
-                    
-                    orig_text = uncached_texts[uncached_indices.index(idx)]
-                    key = self._cache_key(orig_text)
-                    with self._lock:
-                        self._cache[key] = part_clean
-                return results
-            else:
-                logger.warning(
-                    f"Jumlah bagian terjemahan batch tidak sesuai ({len(parts)} vs {len(uncached_texts)}). "
-                    "Menggunakan fallback terjemahan individual."
-                )
-        except Exception as e:
-            logger.warning(f"Gagal melakukan terjemahan batch: {e}. Menggunakan fallback.")
+        chunks = []
+        current_chunk = []
+        current_length = 0
 
-        fallback_tasks = [self.translate(text) for text in uncached_texts]
-        fallback_results = await asyncio.gather(*fallback_tasks)
-        
-        for idx, translated_text in zip(uncached_indices, fallback_results):
-            results[idx] = translated_text
+        for idx, text in zip(uncached_indices, uncached_texts):
+            text_len = len(text)
+            if current_length + text_len + len(delimiter) > max_chars and current_chunk:
+                chunks.append(current_chunk)
+                current_chunk = []
+                current_length = 0
+            current_chunk.append((idx, text))
+            current_length += text_len + len(delimiter)
+
+        if current_chunk:
+            chunks.append(current_chunk)
+
+        sem = asyncio.Semaphore(3)
+
+        async def translate_chunk(chunk) -> list[tuple[int, str]]:
+            chunk_indices = [item[0] for item in chunk]
+            chunk_texts = [item[1] for item in chunk]
+            chunk_joined = delimiter.join(chunk_texts)
             
+            async with sem:
+                try:
+                    translated_joined = await self.translate(chunk_joined)
+                    parts = re.split(r'\s*\|\|\|\s*', translated_joined)
+                    
+                    if len(parts) == len(chunk_texts):
+                        chunk_results = []
+                        for idx, part_text, orig_text in zip(chunk_indices, parts, chunk_texts):
+                            part_clean = part_text.strip()
+                            key = self._cache_key(orig_text)
+                            with self._lock:
+                                self._cache[key] = part_clean
+                            chunk_results.append((idx, part_clean))
+                        return chunk_results
+                except Exception as e:
+                    logger.warning(f"Gagal menerjemahkan chunk batch: {e}. Menggunakan fallback.")
+
+            chunk_results = []
+            for idx, orig_text in chunk:
+                async with sem:
+                    try:
+                        translated_text = await self.translate(orig_text)
+                        key = self._cache_key(orig_text)
+                        with self._lock:
+                            self._cache[key] = translated_text
+                        chunk_results.append((idx, translated_text))
+                    except Exception:
+                        chunk_results.append((idx, orig_text))
+            return chunk_results
+
+        tasks = [translate_chunk(chunk) for chunk in chunks]
+        chunks_results = await asyncio.gather(*tasks)
+
+        for chunk_res in chunks_results:
+            for idx, translated_text in chunk_res:
+                results[idx] = translated_text
+
         return results
 
 translator_service = TranslatorService()
