@@ -1,0 +1,22 @@
+# Cek Data Bocor
+
+> Free service for Indonesian users to check if their accounts or emails have been compromised in global public data breaches.
+
+## Site Details
+* **Domain**: https://databocor.web.id
+* **Language**: Indonesian (User Interface & Recommendations)
+* **API Engine**: Integrates with public breach databases securely with local risk assessments and smart mitigations.
+
+## Tech Stack
+* **Frontend**: Astro (Static Site Generation), TypeScript, Tailwind CSS.
+* **Backend**: FastAPI (Python 3.13), Uvicorn, Pydantic, HTTPX.
+* **Architecture**: Clean separation of Static Edge UI and Serverless API.
+
+## Public API Endpoints
+* `GET /api/check?email=<email>`: Evaluates breach status, risk score (0-100), risk rating, and returns mitigation recommendations in Indonesian.
+  * Rate-limited: max 10 requests/minute per IP.
+  * Cache: 10-minute TTL in-memory.
+
+## Security Policies
+* No storage of email addresses or search history.
+* Safe header validation (CSP, HSTS, X-Frame-Options).
