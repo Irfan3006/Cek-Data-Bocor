@@ -3,6 +3,9 @@ from typing import Optional, List
 
 class EmailCheckRequest(BaseModel):
     email: EmailStr
+    challenge: str
+    challenge_token: str
+    nonce: int
 
 class BreachDetail(BaseModel):
     breach: str = Field(..., description="Nama layanan yang bocor")

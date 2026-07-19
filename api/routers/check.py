@@ -6,6 +6,7 @@ from typing import Dict, Any
 from api.schemas.check import CheckResponse, BreachDetail, EmailCheckRequest
 from api.cache.store import cache_store
 from api.core.limiter import rate_limit_dependency
+from api.core.pow import challenge_manager
 from api.services.xposedornot import xon_service
 from api.risk.calculator import risk_calculator
 from api.recommendation.engine import recommendation_engine
@@ -24,6 +25,16 @@ router = APIRouter()
 async def check_email(
     request_data: EmailCheckRequest
 ) -> Any:
+    if not challenge_manager.validate_solution(
+        request_data.challenge,
+        request_data.nonce,
+        request_data.challenge_token,
+    ):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Verifikasi keamanan gagal. Silakan muat ulang halaman dan coba lagi.",
+        )
+
     normalized_email = str(request_data.email).strip().lower()
     
     cached_result = cache_store.get(normalized_email)

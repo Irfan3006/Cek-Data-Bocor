@@ -29,6 +29,10 @@ const { initialValue = "" } = Astro.props;
       <p id="email-error" class="text-xs text-danger hidden" role="alert"></p>
     </div>
 
+    <div aria-hidden="true" style="position:absolute;left:-9999px;top:-9999px;height:0;overflow:hidden;opacity:0;pointer-events:none;">
+      <input type="text" name="website" id="hp-field" tabindex="-1" autocomplete="off" />
+    </div>
+
     <button
       type="submit"
       class="w-full py-3 px-4 bg-primary hover:bg-primary-dark text-white font-semibold rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ring-offset-neutral-bg flex items-center justify-center space-x-2"
@@ -46,12 +50,22 @@ const { initialValue = "" } = Astro.props;
   const form = document.getElementById("check-form") as HTMLFormElement | null;
   const input = document.getElementById("email") as HTMLInputElement | null;
   const errorMsg = document.getElementById("email-error") as HTMLParagraphElement | null;
+  const honeypot = document.getElementById("hp-field") as HTMLInputElement | null;
 
   const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+  const pageLoadTime = Date.now();
 
   form?.addEventListener("submit", (event) => {
     event.preventDefault();
     if (!input || !errorMsg) return;
+
+    if (honeypot && honeypot.value) {
+      return;
+    }
+
+    if (Date.now() - pageLoadTime < 1500) {
+      return;
+    }
 
     const rawVal = input.value.trim();
     

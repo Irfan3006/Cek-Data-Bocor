@@ -623,12 +623,28 @@ const pageDescription = "Halaman hasil cek data bocor. Temukan apakah email, aku
       }
 
       try {
+        const challengeRes = await fetch("/api/challenge");
+        if (!challengeRes.ok) {
+          if (loadingContainer) loadingContainer.classList.add("hidden");
+          renderErrorState("Gagal memuat verifikasi keamanan. Silakan muat ulang halaman.");
+          return;
+        }
+        const challengeData = await challengeRes.json();
+        const { challenge, difficulty, token } = challengeData;
+
+        const nonce = await solvePoW(challenge, difficulty);
+
         const response = await fetch(`/api/check`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json"
           },
-          body: JSON.stringify({ email: email })
+          body: JSON.stringify({
+            email: email,
+            challenge: challenge,
+            challenge_token: token,
+            nonce: nonce,
+          })
         });
 
         if (loadingContainer) loadingContainer.classList.add("hidden");
@@ -636,6 +652,12 @@ const pageDescription = "Halaman hasil cek data bocor. Temukan apakah email, aku
         if (response.status === 429) {
           const data = await response.json();
           renderErrorState(data.detail || "Terlalu banyak pengecekan email. Silakan tunggu 1 menit.", 429);
+          return;
+        }
+
+        if (response.status === 403) {
+          const data = await response.json();
+          renderErrorState(data.detail || "Verifikasi keamanan gagal. Silakan muat ulang halaman.");
           return;
         }
 
@@ -668,7 +690,6 @@ const pageDescription = "Halaman hasil cek data bocor. Temukan apakah email, aku
           renderCleanState(data.email, data.risk_assessment.score, data.risk_assessment.rating, data.recommendations);
         }
 
-        // Jalankan verifikasi donasi setelah rendering hasil sukses
         incrementAndCheckDonation();
       } catch (err) {
         if (loadingContainer) loadingContainer.classList.add("hidden");
@@ -676,7 +697,24 @@ const pageDescription = "Halaman hasil cek data bocor. Temukan apakah email, aku
       }
     }
 
-    // Jalankan pencarian otomatis ketika dokumen siap
+    async function solvePoW(challenge: string, difficulty: number): Promise<number> {
+      const targetPrefix = "0".repeat(difficulty);
+      const encoder = new TextEncoder();
+      let nonce = 0;
+
+      while (true) {
+        const data = encoder.encode(`${challenge}:${nonce}`);
+        const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        const hashHex = hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
+
+        if (hashHex.startsWith(targetPrefix)) {
+          return nonce;
+        }
+        nonce++;
+      }
+    }
+
     document.addEventListener("DOMContentLoaded", performCheck);
   </script>
 </Layout>
