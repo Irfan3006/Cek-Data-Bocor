@@ -15,15 +15,15 @@ const {
   schemaJson 
 } = Astro.props;
 
-const siteName = "Cek Data Bocor";
+const siteName = "Data Bocor";
 const baseUrl = "https://databocor.web.id"; // Fallback URL
 const canonicalURL = new URL(canonicalPath, Astro.site ?? baseUrl).toString();
 
-// Default JSON-LD WebSite Schema
 const defaultSchema = {
   "@context": "https://schema.org",
   "@type": "WebSite",
   "name": siteName,
+  "alternateName": ["Cek Data Bocor", "databocor.web.id"],
   "url": baseUrl,
   "description": "Layanan gratis untuk mendeteksi kebocoran email di Indonesia menggunakan database publik.",
   "inLanguage": "id-ID"
