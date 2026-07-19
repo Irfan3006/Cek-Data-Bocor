@@ -70,7 +70,10 @@ const pageDescription = "Halaman hasil cek data bocor. Temukan apakah email, aku
 
       <!-- QRIS Code Image Container -->
       <div
-        class="relative group bg-white p-4 rounded-lg max-w-[220px] mx-auto shadow-md border border-neutral-border transition-transform hover:scale-[1.03] duration-300"
+        id="qris-modal-trigger"
+        class="relative group bg-white p-4 rounded-lg max-w-[220px] mx-auto shadow-md border border-neutral-border transition-transform hover:scale-[1.03] duration-300 cursor-zoom-in"
+        role="button"
+        aria-label="Perbesar QRIS"
       >
         <div class="absolute inset-0 border-2 border-primary/20 rounded-lg animate-pulse pointer-events-none"></div>
         <img src="/qris.webp" alt="QRIS Donasi Cek Kebocoran Data" class="w-full h-auto object-contain rounded select-none" loading="eager" />
@@ -114,6 +117,51 @@ const pageDescription = "Halaman hasil cek data bocor. Temukan apakah email, aku
     </div>
   </div>
 
+  <div
+    id="qris-zoom-modal"
+    class="hidden fixed inset-0 bg-black/90 backdrop-blur-md z-[100] items-center justify-center p-4 animate-in fade-in duration-200"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="qris-zoom-title"
+  >
+    <div
+      class="bg-neutral-bgAlt border border-neutral-border p-6 rounded-2xl max-w-sm w-full shadow-2xl relative flex flex-col items-center space-y-4 animate-in fade-in zoom-in-95 duration-200"
+    >
+      <button
+        id="close-qris-zoom-btn"
+        class="absolute top-4 right-4 text-neutral-textMuted hover:text-neutral-text transition-colors p-1.5 rounded-full hover:bg-neutral-border/50 focus:outline-none focus:ring-2 focus:ring-primary"
+        aria-label="Tutup perbesaran QRIS"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+        </svg>
+      </button>
+
+      <div class="text-center space-y-1">
+        <h3 id="qris-zoom-title" class="text-base font-bold text-neutral-text">Scan QRIS Donasi</h3>
+        <p class="text-xs text-neutral-textMuted">Dukung kelangsungan server agar tetap gratis & bebas iklan</p>
+      </div>
+
+      <div class="bg-white p-4 rounded-xl shadow-inner border border-neutral-border max-w-[260px] w-full aspect-square flex items-center justify-center select-none">
+        <img src="/qris.webp" alt="QRIS Donasi Detail" class="w-full h-full object-contain rounded" />
+      </div>
+
+      <button
+        id="download-qris-btn"
+        class="w-full py-3 px-4 bg-primary hover:bg-primary-dark text-white font-semibold rounded-lg transition-all flex items-center justify-center space-x-2 text-sm shadow-md focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-neutral-bg disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+        </svg>
+        <span id="download-btn-text">Simpan ke Galeri</span>
+      </button>
+
+      <p class="text-[11px] text-neutral-textMuted text-center leading-relaxed">
+        Buka aplikasi e-wallet (GoPay, OVO, Dana, LinkAja) atau m-Banking Anda, pilih menu QRIS / Scan, lalu unggah/scan gambar ini.
+      </p>
+    </div>
+  </div>
+
   <Footer />
 
   <script>
@@ -126,7 +174,7 @@ const pageDescription = "Halaman hasil cek data bocor. Temukan apakah email, aku
     const donationCardHtml = `
       <div class="bg-neutral-bgAlt border border-primary/10 p-6 rounded-lg shadow-sm flex flex-col sm:flex-row items-center gap-6" role="complementary" aria-label="Donasi Sukarela">
         <!-- QRIS Image -->
-        <div class="relative bg-white p-3 rounded-lg max-w-[130px] w-full mx-auto sm:mx-0 shadow-md border border-neutral-border flex-shrink-0 transition-transform hover:scale-105 duration-200">
+        <div id="qris-inline-trigger" class="relative bg-white p-3 rounded-lg max-w-[130px] w-full mx-auto sm:mx-0 shadow-md border border-neutral-border flex-shrink-0 transition-transform hover:scale-105 duration-200 cursor-zoom-in" role="button" aria-label="Perbesar QRIS">
           <img src="/qris.webp" alt="QRIS Donasi" class="w-full h-auto object-contain rounded select-none" />
         </div>
         <!-- Copywriting -->
@@ -599,6 +647,109 @@ const pageDescription = "Halaman hasil cek data bocor. Temukan apakah email, aku
         modal.classList.remove("flex");
         document.body.style.overflow = ""; // Aktifkan kembali scrolling
       }
+    });
+
+    const qrisZoomModal = document.getElementById("qris-zoom-modal");
+    const closeQrisZoomBtn = document.getElementById("close-qris-zoom-btn");
+
+    function openQrisZoomModal() {
+      if (!qrisZoomModal) return;
+      qrisZoomModal.classList.remove("hidden");
+      qrisZoomModal.classList.add("flex");
+      document.body.style.overflow = "hidden";
+    }
+
+    function closeQrisZoomModal() {
+      if (!qrisZoomModal) return;
+      qrisZoomModal.classList.add("hidden");
+      qrisZoomModal.classList.remove("flex");
+
+      const donationModal = document.getElementById("donation-modal");
+      const isDonationModalOpen = donationModal && !donationModal.classList.contains("hidden");
+      if (!isDonationModalOpen) {
+        document.body.style.overflow = "";
+      }
+    }
+
+    document.addEventListener("click", (e) => {
+      const target = e.target as HTMLElement;
+      if (target.closest("#qris-inline-trigger, #qris-modal-trigger")) {
+        openQrisZoomModal();
+      }
+    });
+
+    closeQrisZoomBtn?.addEventListener("click", closeQrisZoomModal);
+    qrisZoomModal?.addEventListener("click", (e) => {
+      if (e.target === qrisZoomModal) {
+        closeQrisZoomModal();
+      }
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") {
+        closeQrisZoomModal();
+      }
+    });
+
+    const downloadQrisBtn = document.getElementById("download-qris-btn") as HTMLButtonElement | null;
+    const downloadBtnText = document.getElementById("download-btn-text");
+
+    downloadQrisBtn?.addEventListener("click", () => {
+      if (!downloadQrisBtn || !downloadBtnText) return;
+
+      const originalText = downloadBtnText.textContent;
+      downloadBtnText.textContent = "Mengonversi...";
+      downloadQrisBtn.disabled = true;
+
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      img.src = "/qris.webp";
+
+      img.onload = () => {
+        try {
+          const canvas = document.createElement("canvas");
+          canvas.width = img.naturalWidth;
+          canvas.height = img.naturalHeight;
+          const ctx = canvas.getContext("2d");
+          if (!ctx) throw new Error("Could not get canvas context");
+
+          ctx.fillStyle = "#ffffff";
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+          ctx.drawImage(img, 0, 0);
+
+          const jpegDataUrl = canvas.toDataURL("image/jpeg", 0.95);
+
+          const link = document.createElement("a");
+          link.href = jpegDataUrl;
+          link.download = "QRIS_Donasi_CekDataBocor.jpg";
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        } catch (error) {
+          console.error("Gagal mengonversi QRIS ke JPG:", error);
+          const link = document.createElement("a");
+          link.href = "/qris.webp";
+          link.download = "QRIS_Donasi_CekDataBocor.webp";
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        } finally {
+          downloadBtnText.textContent = originalText;
+          downloadQrisBtn.disabled = false;
+        }
+      };
+
+      img.onerror = () => {
+        console.error("Gagal memuat gambar QRIS");
+        const link = document.createElement("a");
+        link.href = "/qris.webp";
+        link.download = "QRIS_Donasi_CekDataBocor.webp";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        downloadBtnText.textContent = originalText;
+        downloadQrisBtn.disabled = false;
+      };
     });
 
     // Panggil API Backend menggunakan Fetch
