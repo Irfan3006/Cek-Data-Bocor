@@ -9,7 +9,13 @@ class Settings(BaseSettings):
     rate_limit_requests: int = 10
     rate_limit_window_seconds: int = 60
     
-    allowed_origins: list[str] = ["https://databocor.web.id"]
+    allowed_origins: list[str] = [
+        "https://databocor.web.id",
+        "http://localhost:4321",
+        "http://127.0.0.1:4321",
+        "http://localhost:3000",
+        "http://127.0.0.1:3000"
+    ]
     
     pow_secret_key: str = "change-this-secret-key-in-production"
     pow_difficulty: int = 4
