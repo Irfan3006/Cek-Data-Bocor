@@ -48,3 +48,6 @@ Thumbs.db
 
 # Scratch directory
 scratch/
+
+# Agent customization rules
+.agents/

@@ -30,6 +30,10 @@ const defaultSchema = {
 };
 
 const finalSchema = schemaJson || defaultSchema;
+
+const displayTitle = title.includes(siteName) || title.includes("Cek Data") 
+  ? title 
+  : `${title} | ${siteName}`;
 ---
 
 <!DOCTYPE html>
@@ -50,7 +54,7 @@ const finalSchema = schemaJson || defaultSchema;
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     
-    <title>{title} | {siteName}</title>
+    <title>{displayTitle}</title>
     <meta name="description" content={description} />
     <meta name="keywords" content="cek data bocor, data bocor, cek data, cek email bocor, cek email, cek password bocor, cek akun, cek hacker, cybersecurity indonesia, periksa akun retas" />
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
@@ -66,7 +70,7 @@ const finalSchema = schemaJson || defaultSchema;
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content={canonicalURL} />
-    <meta property="og:title" content={`${title} | ${siteName}`} />
+    <meta property="og:title" content={displayTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:site_name" content={siteName} />
     <meta property="og:image" content={`${baseUrl}/og-image.png`} />
@@ -78,7 +82,7 @@ const finalSchema = schemaJson || defaultSchema;
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:url" content={canonicalURL} />
-    <meta name="twitter:title" content={`${title} | ${siteName}`} />
+    <meta name="twitter:title" content={displayTitle} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={`${baseUrl}/og-image.png`} />
 
